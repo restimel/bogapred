@@ -1,0 +1,25 @@
+{
+  "name": "Bogapred",
+  "version": "0.0.1",
+  "author": "Benoit Mariat",
+  "description": "Application which help building boardgame prototypes",
+  "dependencies": {
+    "backbone": "1.3.x",
+    "jquery": "^3.0.0",
+    "underscore": "1.8.x"
+  },
+  "devDependencies": {
+    "browserify": "latest",
+    "watchify": "latest",
+    "gulp": "latest",
+    "gulp-util": "latest",
+    "gulp-sourcemaps": "latest",
+    "gulp-uglify": "latest",
+    "vinyl-source-stream": "latest",
+    "vinyl-buffer": "latest",
+    "underscore": "latest"
+  },
+  "scripts": {
+    "build-js": "npm install && gulp js"
+  }
+}

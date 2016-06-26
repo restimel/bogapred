@@ -1,0 +1,22 @@
+Sequence diagram about workflow between pages, sharedWroker and IndexDb to retrieve and store projects
+
+https://knsv.github.io/mermaid/live_editor/
+
+https://knsv.github.io/mermaid/live_editor/#/edit/c2VxdWVuY2VEaWFncmFtCnBhcnRpY2lwYW50IFBhZ2UxCnBhcnRpY2lwYW50IFBhZ2UyCk5vdGUgbGVmdCBvZiBQYWdlMTogT3BlbiBmaXJzdCBwYWdlClBhZ2UxLT4-U2hhcmVkV29ya2VyOiBjb25uZWN0aW9uClNoYXJlZFdvcmtlci0-PkluZGV4RGI6IGdldCBwcm9qZWN0CkluZGV4RGItLT4-U2hhcmVkV29ya2VyOiBwcm9qZWN0ClNoYXJlZFdvcmtlci0tPj5QYWdlMTogZ2V0IHByb2plY3QKTm90ZSBsZWZ0IG9mIFBhZ2UyOiBPcGVuIGEgMm5kIHBhZ2UKUGFnZTItPj5TaGFyZWRXb3JrZXI6IGNvbm5lY3Rpb24KU2hhcmVkV29ya2VyLS0-PlBhZ2UyOiBnZXQgcHJvamVjdApOb3RlIGxlZnQgb2YgUGFnZTE6IE1vZGlmeSBwcm9qZWN0ClBhZ2UxLT4-U2hhcmVkV29ya2VyOiBzZW5kIHVwZGF0ZQpTaGFyZWRXb3JrZXItPj5QYWdlMjogdXBkYXRlIHByb2plY3QKU2hhcmVkV29ya2VyLT4-SW5kZXhEYjogdXBkYXRlIHByb2plY3QKSW5kZXhEYi0-PkluZGV4RGI6IHVwZGF0ZSBpbmNyZW1lbnRhbCBsb2c
+
+sequenceDiagram
+participant Page1
+participant Page2
+Note left of Page1: Open first page
+Page1->>SharedWorker: connection
+SharedWorker->>IndexDb: get project
+IndexDb-->>SharedWorker: project
+SharedWorker-->>Page1: get project
+Note left of Page2: Open a 2nd page
+Page2->>SharedWorker: connection
+SharedWorker-->>Page2: get project
+Note left of Page1: Modify project
+Page1->>SharedWorker: send update
+SharedWorker->>Page2: update project
+SharedWorker->>IndexDb: update project
+IndexDb->>IndexDb: update incremental log
