@@ -13543,14 +13543,40 @@ var Backbone = require('backbone');
 
 var model = Backbone.Model.prototype;
 
+function getWhere(obj, path) {
+	//TODO improve performance by caching results
+	var id, value, item;
+
+	[id, ...value] = path.split('=');
+	value = value.join('=');
+
+	_.some(obj.attributes || obj.models || obj, function(model) {
+		/* == instead of === to compare a string (from the path)
+		 * with the real value stored in model */
+		if (model && _.isFunction(model.get) && model.get(id) == value) {
+			item = model;
+			return true;
+		}
+	});
+
+	return item;
+}
+
 function getPath(path) {
 	return _.compact(path.split(/"?[.[\]]"?/));
 }
 
 function getValue(attrs, options) {
 	return _.reduce(attrs, function(obj, attr) {
+		var item;
+
 		if (_.isUndefined(obj)) {
 			return;
+		}
+
+		if (attr.indexOf('=') !== -1) {
+			/* manage attr with "=" */
+			return getWhere(obj, attr);
 		}
 
 		if (obj instanceof Backbone.Model) {
@@ -13733,10 +13759,13 @@ module.exports = Collection.extend({
 },{"BB/collection.js":4,"models/Archetype":8}],7:[function(require,module,exports){
 'use strict';
 
+var w = new SharedWorker('worker.js');
+
+document.getElementById('test').textContent= 'running';
 var Model = require('models/Project.js');
 var ModelA = require('models/Archetype.js');
 
-var test = new Model({id: 10, title: 'Youpi', a: 1, b: true, archetype: [{id: 42, title: 'Arheotype'}]});
+var test = new Model({id: 10, title: 'Youpi', a: 1, b: true, archetype: [{id: 1, title: 'first'}, {id: 42, title: 'The Archetype'}]});
 
 console.log('test→', test);
 console.log('Truthy', test.isValid());
@@ -13744,11 +13773,13 @@ test.set('archetype[0].id', 'arf');
 console.log('Falsy', test.isValid());
 test.set('archetype[0].id', 2);
 console.log('Truthy', test.isValid());
-test.set('archetype[1]', new ModelA({id: 42, title: 'added'}));
-console.log('Truthy', test.isValid());
-console.log(test.get('archetype[1].title'));
+console.log('(first)', test.get('archetype[0].title'));
 
 console.log('archetype', test.get('archetype'));
+
+console.log('findWhere (archetype 42)', test.get('archetype[id=42].title'))
+
+document.getElementById('test').textContent= 'OK';
 },{"models/Archetype.js":8,"models/Project.js":9}],8:[function(require,module,exports){
 'use strict'
 

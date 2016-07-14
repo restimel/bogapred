@@ -20,6 +20,8 @@
     "underscore": "latest"
   },
   "scripts": {
-    "build-js": "npm install && gulp js"
+    "build": "npm install && gulp build",
+    "debug": "npm install && gulp debug",
+    "js": "npm install && gulp"
   }
 }

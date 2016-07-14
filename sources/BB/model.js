@@ -5,14 +5,40 @@ var Backbone = require('backbone');
 
 var model = Backbone.Model.prototype;
 
+function getWhere(obj, path) {
+	//TODO improve performance by caching results
+	var id, value, item;
+
+	[id, ...value] = path.split('=');
+	value = value.join('=');
+
+	_.some(obj.attributes || obj.models || obj, function(model) {
+		/* == instead of === to compare a string (from the path)
+		 * with the real value stored in model */
+		if (model && _.isFunction(model.get) && model.get(id) == value) {
+			item = model;
+			return true;
+		}
+	});
+
+	return item;
+}
+
 function getPath(path) {
 	return _.compact(path.split(/"?[.[\]]"?/));
 }
 
 function getValue(attrs, options) {
 	return _.reduce(attrs, function(obj, attr) {
+		var item;
+
 		if (_.isUndefined(obj)) {
 			return;
+		}
+
+		if (attr.indexOf('=') !== -1) {
+			/* manage attr with "=" */
+			return getWhere(obj, attr);
 		}
 
 		if (obj instanceof Backbone.Model) {
